@@ -119,11 +119,11 @@ class EasyListPAC:
         return self.args
 
     def easylists_download_latest(self):
-        easylist_url = 'https://easylist.to/easylist/easylist.txt'
-        easyprivacy_url = 'https://easylist.to/easylist/easyprivacy.txt'
-        fanboy_annoyance_url = 'https://easylist.to/easylist/fanboy-annoyance.txt'
-        fanboy_antifacebook = 'https://raw.githubusercontent.com/ryanbr/fanboy-adblock/master/fanboy-antifacebook.txt'
-        self.download_list = [fanboy_antifacebook, fanboy_annoyance_url, easyprivacy_url, easylist_url] + self.extra_easylist_urls
+        easylist_url = 'https://easylist-downloads.adblockplus.org/easylist_noelemhide.txt' # EasyList, element hider rules removed already
+        adguard_1_url = 'https://gitcdn.xyz/repo/AdguardTeam/FiltersRegistry/master/filters/filter_2_English/filter.txt' # English Adguard, based on Easylist
+        adguard_2_url = 'https://gitcdn.xyz/repo/AdguardTeam/FiltersRegistry/master/filters/filter_11_Mobile/filter.txt' # Mobile Adguard, blocks mobile adnets
+        adguard_3_url = 'https://gitcdn.xyz/repo/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt' # DNS Adguard, jack-of-all-trades and for DNS level
+        self.download_list = [adguard_1_url, adguard_2_url, adguard_3_url, easylist_url] + self.extra_easylist_urls
         self.file_list = []
         for url in self.download_list:
             fname = os.path.basename(url)
@@ -796,7 +796,7 @@ else
 var normal = "DIRECT";
 var proxy = "{}";                  // e.g. 127.0.0.1:3128
 // var blackhole_ip_port = "127.0.0.1:8119";  // ngnix-hosted blackhole
-// var blackhole_ip_port = "8.8.8.8:53";      // GOOG DNS blackhole; do not use: no longer works with iOS 11—causes long waits on some sites
+// var blackhole_ip_port = "8.8.8.8:53";      // a DNS blackhole; do not use: causes long loading times for some items like embeded YouTube videos
 var blackhole_ip_port = "{}";    // on iOS a working blackhole requires return code 200;
 // e.g. use the adblock2privoxy nginx server as a blackhole
 var blackhole = "PROXY " + blackhole_ip_port;
