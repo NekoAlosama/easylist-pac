@@ -1,4 +1,4 @@
 [submodule "adblock2privoxy"]
 	path = adblock2privoxy
-	url = ../adblock2privoxy.git
+	url = https://github.com/essandess/adblock2privoxy.git
 	branch = master
