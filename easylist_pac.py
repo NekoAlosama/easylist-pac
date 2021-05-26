@@ -88,16 +88,16 @@ class EasyListPAC:
         parser.add_argument('-p', '--proxy', help="Proxy host:port", type=str, default='')
         parser.add_argument('-P', '--PAC-original', help="Original proxy.pac file", type=str, default='proxy.pac.orig')
         parser.add_argument('-rb', '--bad-rule-max', help="Maximum number of bad rules (-1 for unlimited)", type=int,
-                            default=19999)
+                            default=253770)
         parser.add_argument('-rg', '--good-rule-max', help="Maximum number of good rules (-1 for unlimited)",
-                            type=int, default=1099)
+                            type=int, default=1396)
         parser.add_argument('-th', '--truncate_hash', help="Truncate hash object length to maximum number", type=int,
-                            default=3999)
+                            default=5075)
         parser.add_argument('-tr', '--truncate_regex', help="Truncate regex rules to maximum number", type=int,
-                            default=499)
+                            default=634)
         parser.add_argument('-w', '--sliding-window', help="Sliding window training and test (slow)", action='store_true')
         parser.add_argument('-x', '--Extra_EasyList_URLs', help="Extra Easylsit URLs", type=str, nargs='+', default=[])
-        parser.add_argument('-*', '--wildcard-limit', help="Limit the number of wildcards", type=int, default=999)
+        parser.add_argument('-*', '--wildcard-limit', help="Limit the number of wildcards", type=int, default=1269)
         parser.add_argument('-@@', '--exceptions_include_flag', help="Include exception rules", action='store_true')
         args = parser.parse_args()
         self.args = parser.parse_args()
@@ -125,8 +125,10 @@ class EasyListPAC:
         adguard_3_url = 'https://gitcdn.xyz/repo/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt' # DNS Adguard, jack-of-all-trades and for DNS level
         self.download_list = [adguard_1_url, adguard_2_url, adguard_3_url, easylist_url] + self.extra_easylist_urls
         self.file_list = []
+        b = 0
         for url in self.download_list:
-            fname = os.path.basename(url)
+            fname = os.path.basename(url + f'_{b}')
+            b += 1
             fname_full = os.path.join(self.easylist_dir, fname)
             file_utc = file_to_utc(fname_full) if os.path.isfile(os.path.join(self.easylist_dir, fname)) else 0.
             resp = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': user_agent}))
@@ -187,7 +189,7 @@ class EasyListPAC:
                 if not ignore_rules_flag:
                     ignored_rules_count = 0
                     ignore_rules_flag = True
-                    print('Ignore rules following comment ', end='', flush=True)
+                    print('\nIgnore rules following comment ', end='', flush=True)
                 print('"{}"… '.format(ignored_rules_comment_start), end='', flush=True)
             else:
                 if ignore_rules_flag: print('\n {:d} rules ignored.'.format(ignored_rules_count), flush=True)
@@ -247,9 +249,9 @@ e.g. non-domain specific popups or images."""
 
         # Logistic Regression for more accurate rule priorities
         if machine_learning_flag:
-            print("Performing logistic regression on rule sets. This will take a few minutes…",end='',flush=True)
+            print("\nPerforming logistic regression on rule sets. This will take a few minutes…",end='',flush=True)
             self.logreg_priorities()
-            print(" done.", flush=True)
+            print("done!", flush=True)
 
             # truncate to positive signal strengths
             if not self.debug:
