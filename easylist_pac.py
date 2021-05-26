@@ -81,7 +81,7 @@ class EasyListPAC:
         # blackhole specification in arguments
         # best choice is the LAN IP address of the http://hostname/proxy.pac web server or a dedicated blackhole server, e.g. 192.168.0.2:8119
         parser = ap.ArgumentParser()
-        parser.add_argument('-b', '--blackhole', help="Blackhole IP:port", type=str, default='127.0.0.1:8119')
+        parser.add_argument('-b', '--blackhole', help="Blackhole IP:port", type=str, default='192.175.48.6:53')
         parser.add_argument('-d', '--download-dir', help="Download directory", type=str, default='~/Downloads')
         parser.add_argument('-g', '--debug', help="Debug: Just print rules", action='store_true')
         parser.add_argument('-moff', '--my_extra_rules_turnoff_flag', help="Turn off adding my extra rules", default=False, action='store_true')
@@ -239,8 +239,8 @@ e.g. non-domain specific popups or images."""
     def prioritize_rules(self):
         # use bootstrap regex preferences
         # https://github.com/seatgeek/fuzzywuzzy would be great here if there were such a thing for regex
-        self.good_signal = np.array([self.good_class_test(x,opts) for (x,opts,f) in zip(self.good_rules,self.good_opts,self.good_rules_include_flag) if f], dtype=np.int)
-        self.bad_signal = np.array([self.bad_class_test(x,opts) for (x,opts,f) in zip(self.bad_rules,self.bad_opts,self.bad_rules_include_flag) if f], dtype=np.int)
+        self.good_signal = np.array([self.good_class_test(x,opts) for (x,opts,f) in zip(self.good_rules,self.good_opts,self.good_rules_include_flag) if f], dtype=int)
+        self.bad_signal = np.array([self.bad_class_test(x,opts) for (x,opts,f) in zip(self.bad_rules,self.bad_opts,self.bad_rules_include_flag) if f], dtype=int)
 
         self.good_columns = np.array([i for (i,f) in enumerate(self.good_rules_include_flag) if f],dtype=int)
         self.bad_columns = np.array([i for (i,f) in enumerate(self.bad_rules_include_flag) if f],dtype=int)
@@ -254,9 +254,9 @@ e.g. non-domain specific popups or images."""
             # truncate to positive signal strengths
             if not self.debug:
                 self.good_rule_max = min(self.good_rule_max,np.count_nonzero(self.good_signal > 0)) \
-                    if isinstance(self.good_rule_max,(int,np.int)) else np.count_nonzero(self.good_signal > 0)
+                    if isinstance(self.good_rule_max,(int,int)) else np.count_nonzero(self.good_signal > 0)
                 self.bad_rule_max = min(self.bad_rule_max, np.count_nonzero(self.bad_signal > 0)) \
-                    if isinstance(self.bad_rule_max,(int,np.int)) else np.count_nonzero(self.bad_signal > 0)
+                    if isinstance(self.bad_rule_max,(int,int)) else np.count_nonzero(self.bad_signal > 0)
 
         # prioritize and limit the rules
         good_pridx = np.array([e[0] for e in sorted(enumerate(self.good_signal),key=lambda e: e[1],reverse=True)],dtype=int)[:self.good_rule_max]
@@ -296,11 +296,11 @@ e.g. non-domain specific popups or images."""
         self.good_fv_mat, self.good_row_hash = fv_to_mat(self.good_fv_json, self.good_rules)
         self.bad_fv_mat, self.bad_row_hash = fv_to_mat(self.bad_fv_json, self.bad_rules)
 
-        self.good_X_all = StandardScaler(with_mean=False).fit_transform(self.good_fv_mat.astype(np.float))
-        self.good_y_all = np.array([self.good_class_test(x,opts) for (x,opts) in zip(self.good_rules, self.good_opts)], dtype=np.int)
+        self.good_X_all = StandardScaler(with_mean=False).fit_transform(self.good_fv_mat.astype(float))
+        self.good_y_all = np.array([self.good_class_test(x,opts) for (x,opts) in zip(self.good_rules, self.good_opts)], dtype=int)
 
-        self.bad_X_all = StandardScaler(with_mean=False).fit_transform(self.bad_fv_mat.astype(np.float))
-        self.bad_y_all = np.array([self.bad_class_test(x,opts) for (x,opts) in zip(self.bad_rules, self.bad_opts)], dtype=np.int)
+        self.bad_X_all = StandardScaler(with_mean=False).fit_transform(self.bad_fv_mat.astype(float))
+        self.bad_y_all = np.array([self.bad_class_test(x,opts) for (x,opts) in zip(self.bad_rules, self.bad_opts)], dtype=int)
 
         self.logit_fit_method_sample_weights()
 
@@ -1404,7 +1404,7 @@ def fv_to_mat(feature_vector=copy.deepcopy(default_row),rules=[]):
         rows += i_new
         cols += j_new
         vals += v_new
-    fv_mat = sps.coo_matrix((vals,(cols,rows)),shape=(len(rules),len(feature_vector)),dtype=np.float).tocsr()
+    fv_mat = sps.coo_matrix((vals,(cols,rows)),shape=(len(rules),len(feature_vector)),dtype=float).tocsr()
     return fv_mat, row_hash
 
 # convert EasyList wildcard '*', separator '^', and anchor '|' to regexp; ignore '?' globbing
