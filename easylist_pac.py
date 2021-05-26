@@ -125,9 +125,10 @@ class EasyListPAC:
         adguard_3_url = 'https://gitcdn.xyz/repo/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt' # DNS Adguard, jack-of-all-trades and for DNS level
         self.download_list = [adguard_1_url, adguard_2_url, adguard_3_url, easylist_url] + self.extra_easylist_urls
         self.file_list = []
-        b = 0
+        # Some lists are named the same (e.g. "filter.txt"), so append a number to each file to prevent overwrites
+        count = 0
         for url in self.download_list:
-            fname = os.path.basename(url + f'_{b}')
+            fname = os.path.basename(url + f'_{count}')
             b += 1
             fname_full = os.path.join(self.easylist_dir, fname)
             file_utc = file_to_utc(fname_full) if os.path.isfile(os.path.join(self.easylist_dir, fname)) else 0.
