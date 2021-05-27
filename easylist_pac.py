@@ -129,7 +129,7 @@ class EasyListPAC:
         count = 0
         for url in self.download_list:
             fname = os.path.basename(url + f'_{count}')
-            b += 1
+            count += 1
             fname_full = os.path.join(self.easylist_dir, fname)
             file_utc = file_to_utc(fname_full) if os.path.isfile(os.path.join(self.easylist_dir, fname)) else 0.
             resp = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': user_agent}))
